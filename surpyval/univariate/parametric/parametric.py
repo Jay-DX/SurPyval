@@ -1008,9 +1008,11 @@ class Parametric(Distribution):
         # Adjust the plotting points due to truncation
         F = Ftl + F * (Ftr - Ftl)
 
-        y_scale_min = np.min(F[F > 0]) / 2
-        y_scale_max = 1 - (1 - np.max(F[F < 1])) / 10
-
+        # y_scale_min = np.min(F[F > 0]) / 2
+        # y_scale_max = 1 - (1 - np.max(F[F < 1])) / 10
+        y_scale_min = np.min(F[F > 0]) * 0.0001
+        y_scale_max = np.max(F[F < 1]) * 1.4
+        
         # x-axis
         if self.dist.plot_x_scale == "log":
             log_x = np.log10(x_[x_ > 0])
