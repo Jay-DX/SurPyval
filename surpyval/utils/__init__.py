@@ -10,13 +10,34 @@ COX_PH_METHODS = ["breslow", "efron"]
 FG_BASELINE_OPTIONS = ["Nelson-Aalen", "Kaplan-Meier"]
 
 
+# def _round_vals(x):
+#     not_different = True
+#     i = 1
+#     while not_different:
+#         x_ticks = np.array(round_sig(x, i))
+#         not_different = (np.diff(x_ticks) == 0).any()
+#         i += 1
+#     return x_ticks
+
 def _round_vals(x):
     not_different = True
+    # max_iterations = 10 # 최대 반복 횟수 설정 (무한 루프 방지)
     i = 1
-    while not_different:
-        x_ticks = np.array(round_sig(x, i))
+    
+    while not_different : # and i <= max_iterations:
+        # 무한대 값 처리
+        x_finite = np.array([p if not np.isinf(p) else np.nextafter(0, 1) for p in x])
+        x_ticks = np.round(x_finite, i-1)
+        
+        # 이미 충분히 반올림된 경우 종료
         not_different = (np.diff(x_ticks) == 0).any()
+        # if np.diff(x_ticks).all() == 0:
+        #     not_different = False
+        # else:
         i += 1
+    # 무한대 값을 다시 원래 형태로 복원 (필요한 경우)
+    x_ticks = np.array([p if not np.isclose(p, np.nextafter(0, 1)) else np.inf if p > 0 else -np.inf for p in x_ticks])
+    
     return x_ticks
 
 
